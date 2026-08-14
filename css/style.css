@@ -1,0 +1,52 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  color: #000000;
+}
+
+body {
+  font-family: sans-serif;
+  font-size: 1rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+/* Construction gate — delete this block when the site is ready. */
+#construction {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  text-align: center;
+}
+
+html.entered #construction {
+  display: none;
+}
+
+.construction-copy {
+  max-width: 28rem;
+  padding: 1.5rem;
+}
+
+.construction-copy p {
+  margin: 0 0 1rem;
+}
+
+#enter {
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  font: inherit;
+  color: #000000;
+  background: #ffffff;
+  border: 1px solid #000000;
+  cursor: pointer;
+}

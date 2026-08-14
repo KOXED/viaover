@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIAOVER</title>
+  <script>
+    if (sessionStorage.getItem("viaoverEntered")) {
+      document.documentElement.classList.add("entered");
+    }
+  </script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Remove #construction when the site is ready. -->
+  <div id="construction">
+    <div class="construction-copy">
+      <p>VIAOVER</p>
+      <p>UNDER CONSTRUCTION</p>
+      <p>This website is currently in development.</p>
+      <p>Some pages, features, and links may be incomplete, unavailable, or change without notice.</p>
+      <p>You are welcome to look around while VIAOVER is being built.</p>
+      <button type="button" id="enter">[ ENTER VIAOVER ]</button>
+    </div>
+  </div>
+
+  <h1>VIAOVER</h1>
+  <script src="js/main.js"></script>
+</body>
+</html>

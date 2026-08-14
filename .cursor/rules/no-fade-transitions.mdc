@@ -1,0 +1,25 @@
+---
+description: Do not add fade-in/fade-out or page transition animations unless explicitly requested
+alwaysApply: true
+---
+
+# No fade transitions
+
+Do not add fade-in, fade-out, opacity transitions, entrance/exit animations, loading animations, or cinematic page transitions unless the user explicitly asks for them.
+
+Clicking a control should change the UI immediately, like a traditional website.
+
+```css
+/* BAD — do not do this unless asked */
+#construction {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+```
+
+```css
+/* GOOD — show or hide at once */
+html.entered #construction {
+  display: none;
+}
+```
