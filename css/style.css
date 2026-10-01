@@ -58,10 +58,93 @@ html.entered #construction {
 }
 
 #slots {
+  position: relative;
   flex: 1 1 25rem;
   box-sizing: border-box;
   max-width: 25rem;
   padding: 1.5rem;
+}
+
+#slot-points {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.75rem;
+  margin: 0;
+  padding: 0.1rem 0.35rem;
+  font: inherit;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  color: #000000;
+  background: #ffffff;
+  border: 1px solid #000000;
+  cursor: pointer;
+}
+
+#exchange-panel {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+#exchange-panel p {
+  margin: 0 0 0.45rem;
+  font-size: 0.85rem;
+}
+
+.exchange-slider {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+#exchange-range {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  height: 2.5rem;
+  margin: 0;
+  accent-color: #000000;
+  touch-action: none;
+  cursor: pointer;
+}
+
+#exchange-min,
+#exchange-max,
+#exchange-submit {
+  padding: 0.35rem 0.5rem;
+  font: inherit;
+  font-size: 0.75rem;
+  color: #000000;
+  background: #ffffff;
+  border: 1px solid #000000;
+  cursor: pointer;
+}
+
+#exchange-submit {
+  font-size: 1rem;
+  padding: 0.4rem 0.8rem;
+}
+
+#exchange-submit:disabled {
+  color: #767676;
+  border-color: #767676;
+  cursor: default;
+}
+
+.point-pop {
+  position: absolute;
+  top: 1.45rem;
+  right: 0.75rem;
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1;
+  pointer-events: none;
+  animation: point-float 0.7s linear forwards;
+}
+
+@keyframes point-float {
+  from { transform: translateY(0); }
+  to { transform: translateY(-0.7rem); }
 }
 
 #cat {
@@ -145,9 +228,26 @@ html.entered #construction {
   margin: 0.75rem 0 0;
 }
 
+#freeze-tint {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  background: rgba(198, 164, 255, 0);
+  -webkit-backdrop-filter: invert(0) hue-rotate(0deg);
+  backdrop-filter: invert(0) hue-rotate(0deg);
+  transition: background 0.45s linear, backdrop-filter 0.45s linear, -webkit-backdrop-filter 0.45s linear;
+}
+
+html.time-freeze #freeze-tint {
+  background: rgba(198, 164, 255, 0.34);
+  -webkit-backdrop-filter: invert(0.18) hue-rotate(245deg);
+  backdrop-filter: invert(0.18) hue-rotate(245deg);
+}
+
 .flying-coin {
   position: fixed;
-  z-index: 5;
+  z-index: 8;
   box-sizing: border-box;
   width: 3.5rem;
   height: 3.5rem;
@@ -165,13 +265,33 @@ html.entered #construction {
   justify-content: center;
   cursor: pointer;
   touch-action: none;
-  animation: coin-flight 0.9s linear forwards;
+  animation: coin-move 0.7s linear forwards, coin-shrink 5s linear forwards;
 }
 
-@keyframes coin-flight {
-  0% { transform: translate(0, 0) scale(0.92); }
-  45% { transform: translate(calc(var(--x) * 0.55 + var(--px)), calc(var(--y) * 0.55 + var(--py))) scale(1); }
-  100% { transform: translate(var(--x), var(--y)) scale(1); }
+@keyframes coin-move {
+  0% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  50% {
+    translate: calc(var(--x) * 0.55 + var(--px)) calc(var(--y) * 0.55 + var(--py));
+    rotate: var(--spin);
+  }
+  100% {
+    translate: var(--x) var(--y);
+    rotate: calc(var(--spin) * 1.35);
+  }
+}
+
+@keyframes coin-shrink {
+  from { scale: 1; }
+  to { scale: 0; }
+}
+
+@keyframes coin-pop {
+  0% { scale: 1; }
+  40% { scale: 1.22; }
+  100% { scale: 0; }
 }
 
 .coin-spark {
@@ -250,11 +370,13 @@ html.entered #construction {
 .slot-actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.5rem;
 }
 
 #spin,
-#reset-coins {
+#auto-spin,
+#freeze {
   padding: 0.4rem 0.8rem;
   font: inherit;
   color: #000000;
@@ -263,16 +385,40 @@ html.entered #construction {
   cursor: pointer;
 }
 
+#freeze {
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+
+#auto-spin.active {
+  color: #ffffff;
+  background: #000000;
+}
+
 #spin:disabled,
-#reset-coins:disabled {
+#freeze:disabled {
   color: #767676;
   border-color: #767676;
   cursor: default;
 }
 
+#freeze.freezing:disabled {
+  color: #000000;
+  border-color: #000000;
+}
+
 @media (max-width: 480px) {
   #slots {
     padding: 1rem;
+  }
+
+  #slot-points,
+  .point-pop {
+    right: 0.65rem;
+  }
+
+  #slot-points {
+    top: 0.45rem;
   }
 
   #cat {

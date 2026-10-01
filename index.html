@@ -28,6 +28,7 @@
 
   <div class="minigames">
     <section id="slots" aria-label="Slot machine">
+      <button type="button" id="slot-points" aria-expanded="false" aria-controls="exchange-panel">Points: 0</button>
       <h2>SLOTS</h2>
       <p id="slot-balance">Coins: 10</p>
       <div class="reels">
@@ -38,7 +39,18 @@
       <p id="slot-result" aria-live="polite">Match three symbols to win.</p>
       <div class="slot-actions">
         <button type="button" id="spin">[ SPIN ]</button>
-        <button type="button" id="reset-coins">[ RESET ]</button>
+        <button type="button" id="auto-spin" aria-pressed="false" aria-label="Auto spin">∞</button>
+        <button type="button" id="freeze" aria-pressed="false">⏸ FREEZE</button>
+      </div>
+      <div id="exchange-panel" hidden>
+        <div class="exchange-slider">
+          <button type="button" id="exchange-min">MIN</button>
+          <input type="range" id="exchange-range" min="0" max="0" step="20" value="0" aria-label="Points to exchange">
+          <button type="button" id="exchange-max">MAX</button>
+        </div>
+        <p id="exchange-points">Points to exchange: 0</p>
+        <p id="exchange-coins">Coins received: 0</p>
+        <button type="button" id="exchange-submit">[ EXCHANGE ]</button>
       </div>
     </section>
 
@@ -51,6 +63,7 @@
     </section>
   </div>
 
+  <div id="freeze-tint" aria-hidden="true"></div>
   <script src="js/main.js"></script>
 </body>
 </html>
