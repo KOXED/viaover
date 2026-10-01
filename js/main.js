@@ -796,6 +796,66 @@
       updateExchangePreview(parseInt(exchangeRange.value, 10) || 0);
     });
 
+    var sliderPointer = null;
+
+    function valueFromPointer(event) {
+      var rect = exchangeRange.getBoundingClientRect();
+      var max = maxExchange();
+      var ratio;
+      var value;
+      if (max <= 0 || rect.width <= 0) return 0;
+      ratio = (event.clientX - rect.left) / rect.width;
+      if (ratio < 0) ratio = 0;
+      if (ratio > 1) ratio = 1;
+      value = Math.round((ratio * max) / POINT_RATE) * POINT_RATE;
+      if (value < 0) value = 0;
+      if (value > max) value = max;
+      return value;
+    }
+
+    function applySliderPointer(event) {
+      exchangeRange.value = String(valueFromPointer(event));
+      syncExchange();
+    }
+
+    function releaseSlider(event) {
+      if (sliderPointer !== event.pointerId) return;
+      sliderPointer = null;
+      try {
+        if (exchangeRange.hasPointerCapture(event.pointerId)) {
+          exchangeRange.releasePointerCapture(event.pointerId);
+        }
+      } catch (e) {}
+    }
+
+    exchangeRange.addEventListener("pointerdown", function (event) {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      sliderPointer = event.pointerId;
+      try {
+        exchangeRange.setPointerCapture(event.pointerId);
+      } catch (e) {}
+      event.preventDefault();
+      applySliderPointer(event);
+    }, { passive: false });
+
+    exchangeRange.addEventListener("pointermove", function (event) {
+      if (sliderPointer !== event.pointerId) return;
+      event.preventDefault();
+      applySliderPointer(event);
+    }, { passive: false });
+
+    exchangeRange.addEventListener("pointerup", function (event) {
+      if (sliderPointer !== event.pointerId) return;
+      event.preventDefault();
+      applySliderPointer(event);
+      releaseSlider(event);
+    });
+
+    exchangeRange.addEventListener("pointercancel", releaseSlider);
+    exchangeRange.addEventListener("lostpointercapture", function (event) {
+      if (sliderPointer === event.pointerId) sliderPointer = null;
+    });
+
     onGameTap(exchangeMin, function () {
       exchangeRange.value = "0";
       updateExchangePreview(0);

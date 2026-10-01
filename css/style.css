@@ -119,6 +119,12 @@ html.entered #construction {
   border: 1px solid #000000;
 }
 
+#exchange-panel,
+.exchange-slider,
+#exchange-range {
+  touch-action: none;
+}
+
 #exchange-panel {
   text-align: left;
 }
