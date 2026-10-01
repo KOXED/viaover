@@ -104,6 +104,62 @@
     });
   }
 
+  var catFace = document.getElementById("cat-face");
+  var catMessage = document.getElementById("cat-message");
+  var catStage = catFace ? catFace.parentNode : null;
+  var HEARTS = ["❤️", "💖", "💕"];
+
+  function removeHeart(heart) {
+    if (heart.parentNode) heart.parentNode.removeChild(heart);
+  }
+
+  function bounceCat() {
+    catFace.classList.add("react");
+    catFace.style.animation = "none";
+    void catFace.offsetWidth;
+    catFace.style.animation = "";
+  }
+
+  function spawnHearts() {
+    var count = 1 + Math.floor(Math.random() * 3);
+    var width = catStage.clientWidth;
+    var height = catStage.clientHeight;
+    var i;
+
+    for (i = 0; i < count; i++) {
+      var heart = document.createElement("span");
+      var duration = 0.6 + Math.random() * 0.4;
+      heart.className = "heart";
+      heart.setAttribute("aria-hidden", "true");
+      heart.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
+      heart.style.left = (width * (0.15 + Math.random() * 0.7)) + "px";
+      heart.style.top = (height * (0.1 + Math.random() * 0.7)) + "px";
+      heart.style.animationDuration = duration + "s";
+      catStage.appendChild(heart);
+      heart.addEventListener("animationend", function (event) {
+        removeHeart(event.currentTarget);
+      });
+      setTimeout(removeHeart, Math.ceil(duration * 1000) + 50, heart);
+    }
+  }
+
+  if (catFace && catMessage && catStage) {
+    catFace.addEventListener("click", function () {
+      bounceCat();
+      spawnHearts();
+
+      var roll = Math.floor(Math.random() * 100) + 1;
+      if (roll <= 10) {
+        coins += 1;
+        saveCoins();
+        render();
+        catMessage.textContent = "🐱 The cat gave you a coin!";
+      } else {
+        catMessage.textContent = "🐱 Purrr… no coin this time.";
+      }
+    });
+  }
+
   spinBtn.addEventListener("click", spin);
 
   resetBtn.addEventListener("click", function () {

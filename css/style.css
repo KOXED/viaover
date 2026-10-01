@@ -51,9 +51,98 @@ html.entered #construction {
   cursor: pointer;
 }
 
+.minigames {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
 #slots {
-  max-width: 22rem;
+  flex: 1 1 25rem;
+  box-sizing: border-box;
+  max-width: 25rem;
   padding: 1.5rem;
+}
+
+#cat {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  width: 15rem;
+  padding: 1.5rem 1.5rem 1.5rem 0;
+  text-align: center;
+}
+
+.cat-stage {
+  position: relative;
+  display: inline-block;
+}
+
+.heart {
+  position: absolute;
+  z-index: 1;
+  margin: 0;
+  pointer-events: none;
+  font-size: 1.35rem;
+  line-height: 1;
+  animation: heart-float linear forwards;
+}
+
+@keyframes heart-float {
+  from {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -2.75rem);
+    opacity: 0;
+  }
+}
+
+.cat-face {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 9rem;
+  height: 9rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 8rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cat-face:hover {
+  transform: scale(1.12);
+}
+
+.cat-face:focus-visible {
+  outline: 1px solid #000000;
+  outline-offset: 2px;
+}
+
+#cat-face.react {
+  animation: cat-pet 0.28s linear;
+}
+
+@keyframes cat-pet {
+  0% { transform: scale(1, 1); }
+  35% { transform: scale(1.14, 0.86); }
+  70% { transform: scale(0.94, 1.08); }
+  100% { transform: scale(1, 1); }
+}
+
+.cat-label {
+  margin: 0.35rem 0 0;
+}
+
+#cat-message {
+  margin: 0.75rem 0 0;
 }
 
 #slots h2 {
@@ -124,6 +213,11 @@ html.entered #construction {
 @media (max-width: 480px) {
   #slots {
     padding: 1rem;
+  }
+
+  #cat {
+    width: 100%;
+    padding: 0 1rem 1rem;
   }
 
   .reel {

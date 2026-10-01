@@ -26,20 +26,30 @@
 
   <h1>VIAOVER</h1>
 
-  <section id="slots" aria-label="Slot machine">
-    <h2>SLOTS</h2>
-    <p id="slot-balance">Coins: 10</p>
-    <div class="reels">
-      <div class="reel" id="reel-0" aria-hidden="true"><span class="symbol">🍒</span></div>
-      <div class="reel" id="reel-1" aria-hidden="true"><span class="symbol">🍋</span></div>
-      <div class="reel" id="reel-2" aria-hidden="true"><span class="symbol">🔔</span></div>
-    </div>
-    <p id="slot-result" aria-live="polite">Match three symbols to win.</p>
-    <div class="slot-actions">
-      <button type="button" id="spin">[ SPIN ]</button>
-      <button type="button" id="reset-coins">[ RESET ]</button>
-    </div>
-  </section>
+  <div class="minigames">
+    <section id="slots" aria-label="Slot machine">
+      <h2>SLOTS</h2>
+      <p id="slot-balance">Coins: 10</p>
+      <div class="reels">
+        <div class="reel" id="reel-0" aria-hidden="true"><span class="symbol">🍒</span></div>
+        <div class="reel" id="reel-1" aria-hidden="true"><span class="symbol">🍋</span></div>
+        <div class="reel" id="reel-2" aria-hidden="true"><span class="symbol">🔔</span></div>
+      </div>
+      <p id="slot-result" aria-live="polite">Match three symbols to win.</p>
+      <div class="slot-actions">
+        <button type="button" id="spin">[ SPIN ]</button>
+        <button type="button" id="reset-coins">[ RESET ]</button>
+      </div>
+    </section>
+
+    <section id="cat" aria-label="Pet the cat">
+      <div class="cat-stage">
+        <button type="button" id="cat-face" class="cat-face" aria-labelledby="cat-label">🐱</button>
+      </div>
+      <p id="cat-label" class="cat-label">Pet the cat</p>
+      <p id="cat-message" aria-live="polite"></p>
+    </section>
+  </div>
 
   <script src="js/main.js"></script>
 </body>
