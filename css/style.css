@@ -50,3 +50,84 @@ html.entered #construction {
   border: 1px solid #000000;
   cursor: pointer;
 }
+
+#slots {
+  max-width: 22rem;
+  padding: 1.5rem;
+}
+
+#slots h2 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+#slot-balance,
+#slot-result {
+  margin: 0 0 1rem;
+}
+
+.reels {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.reel {
+  flex: 1;
+  height: 4.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid #000000;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.symbol {
+  display: block;
+}
+
+.reel.spinning .symbol {
+  animation: reel-spin 0.08s linear infinite;
+}
+
+@keyframes reel-spin {
+  from { transform: translateY(-70%); }
+  to { transform: translateY(70%); }
+}
+
+.slot-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+#spin,
+#reset-coins {
+  padding: 0.4rem 0.8rem;
+  font: inherit;
+  color: #000000;
+  background: #ffffff;
+  border: 1px solid #000000;
+  cursor: pointer;
+}
+
+#spin:disabled,
+#reset-coins:disabled {
+  color: #767676;
+  border-color: #767676;
+  cursor: default;
+}
+
+@media (max-width: 480px) {
+  #slots {
+    padding: 1rem;
+  }
+
+  .reel {
+    height: 3.75rem;
+    font-size: 1.75rem;
+  }
+}
