@@ -215,7 +215,7 @@
   }
 
   if (autoBtn) {
-    autoBtn.addEventListener("click", function () {
+    onGameTap(autoBtn, function () {
       if (autoOn) {
         autoOn = false;
         render();
@@ -723,23 +723,43 @@
     }
   }
 
-  if (catFace && catMessage && catStage) {
-    catFace.addEventListener("click", function () {
-      var roll;
-      bounceCat();
-      spawnHearts();
-
-      roll = Math.floor(Math.random() * 100) + 1;
-      if (roll <= 10) {
-        catMessage.textContent = "🐱 The cat gave you a coin!";
-        spawnCollectibleCoins(catFace.getBoundingClientRect(), 1);
-      } else {
-        catMessage.textContent = "🐱 Purrr… no coin this time.";
-      }
+  function onGameTap(el, fn) {
+    el.addEventListener("pointerdown", function (event) {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      if (el.disabled) return;
+      event.preventDefault();
+      fn(event);
+    });
+    el.addEventListener("pointerup", function (event) {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      event.preventDefault();
+    });
+    el.addEventListener("click", function (event) {
+      if (event.detail !== 0) return;
+      if (el.disabled) return;
+      fn(event);
     });
   }
 
-  spinBtn.addEventListener("click", function () {
+  function petCat() {
+    var roll;
+    bounceCat();
+    spawnHearts();
+
+    roll = Math.floor(Math.random() * 100) + 1;
+    if (roll <= 10) {
+      catMessage.textContent = "🐱 The cat gave you a coin!";
+      spawnCollectibleCoins(catFace.getBoundingClientRect(), 1);
+    } else {
+      catMessage.textContent = "🐱 Purrr… no coin this time.";
+    }
+  }
+
+  if (catFace && catMessage && catStage) {
+    onGameTap(catFace, petCat);
+  }
+
+  onGameTap(spinBtn, function () {
     if (autoOn) return;
     spin();
   });
@@ -753,7 +773,7 @@
       localStorage.removeItem(FREEZE_KEY);
       applyFreezeButton();
     }
-    freezeBtn.addEventListener("click", function () {
+    onGameTap(freezeBtn, function () {
       startFreeze();
     });
   }
@@ -764,7 +784,7 @@
     document.addEventListener("pointerup", forgetMagnetPointer);
     document.addEventListener("pointercancel", forgetMagnetPointer);
     document.addEventListener("pointerout", forgetMagnetPointer);
-    magnetBtn.addEventListener("click", function () {
+    onGameTap(magnetBtn, function () {
       startMagnet();
     });
     localStorage.removeItem("viaoverMagnet");
@@ -776,19 +796,19 @@
       updateExchangePreview(parseInt(exchangeRange.value, 10) || 0);
     });
 
-    exchangeMin.addEventListener("click", function () {
+    onGameTap(exchangeMin, function () {
       exchangeRange.value = "0";
       updateExchangePreview(0);
     });
 
-    exchangeMax.addEventListener("click", function () {
+    onGameTap(exchangeMax, function () {
       var max = maxExchange();
       exchangeRange.max = String(max);
       exchangeRange.value = String(max);
       updateExchangePreview(max);
     });
 
-    exchangeSubmit.addEventListener("click", function () {
+    onGameTap(exchangeSubmit, function () {
       var selected = parseInt(exchangeRange.value, 10);
       var gained;
       if (isNaN(selected) || selected < POINT_RATE) return;

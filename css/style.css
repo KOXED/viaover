@@ -88,6 +88,7 @@ html.entered #construction {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
+  touch-action: manipulation;
 }
 
 #slots {
@@ -207,6 +208,7 @@ html.entered #construction {
 .cat-stage {
   position: relative;
   display: inline-block;
+  touch-action: manipulation;
 }
 
 .heart {
@@ -247,6 +249,7 @@ html.entered #construction {
   font-size: 8rem;
   line-height: 1;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .cat-face:hover {
@@ -313,7 +316,7 @@ html.time-freeze #freeze-tint {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  touch-action: none;
+  touch-action: manipulation;
   animation: coin-move 0.7s linear forwards, coin-shrink 5s linear forwards;
 }
 
@@ -430,6 +433,7 @@ html.time-freeze #freeze-tint {
   gap: 0.5rem;
   margin: 0;
   padding: 0 1.5rem 0.25rem;
+  touch-action: manipulation;
 }
 
 #spin,
@@ -442,11 +446,11 @@ html.time-freeze #freeze-tint {
   background: #ffffff;
   border: 1px solid #000000;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 #freeze,
 #magnet {
-  touch-action: manipulation;
   white-space: nowrap;
 }
 
