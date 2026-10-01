@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VIAOVER</title>
   <script>
+    try {
+      if (localStorage.getItem("viaoverTheme") === "night") {
+        document.documentElement.classList.add("night-mode");
+      }
+    } catch (e) {}
     if (sessionStorage.getItem("viaoverEntered")) {
       document.documentElement.classList.add("entered");
     }
@@ -12,6 +17,11 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <button type="button" id="theme-toggle" aria-pressed="false">
+    <span class="theme-label-light">☀️ Light View</span>
+    <span class="theme-label-night">🌙 Night View</span>
+  </button>
+
   <!-- Remove #construction when the site is ready. -->
   <div id="construction">
     <div class="construction-copy">
@@ -28,7 +38,6 @@
 
   <div class="minigames">
     <section id="slots" aria-label="Slot machine">
-      <button type="button" id="slot-points" aria-expanded="false" aria-controls="exchange-panel">Points: 0</button>
       <h2>SLOTS</h2>
       <p id="slot-balance">Coins: 10</p>
       <div class="reels">
@@ -37,21 +46,6 @@
         <div class="reel" id="reel-2" aria-hidden="true"><span class="symbol">🔔</span></div>
       </div>
       <p id="slot-result" aria-live="polite">Match three symbols to win.</p>
-      <div class="slot-actions">
-        <button type="button" id="spin">[ SPIN ]</button>
-        <button type="button" id="auto-spin" aria-pressed="false" aria-label="Auto spin">∞</button>
-        <button type="button" id="freeze" aria-pressed="false">⏸ FREEZE</button>
-      </div>
-      <div id="exchange-panel" hidden>
-        <div class="exchange-slider">
-          <button type="button" id="exchange-min">MIN</button>
-          <input type="range" id="exchange-range" min="0" max="0" step="20" value="0" aria-label="Points to exchange">
-          <button type="button" id="exchange-max">MAX</button>
-        </div>
-        <p id="exchange-points">Points to exchange: 0</p>
-        <p id="exchange-coins">Coins received: 0</p>
-        <button type="button" id="exchange-submit">[ EXCHANGE ]</button>
-      </div>
     </section>
 
     <section id="cat" aria-label="Pet the cat">
@@ -61,6 +55,30 @@
       <p id="cat-label" class="cat-label">Pet the cat</p>
       <p id="cat-message" aria-live="polite"></p>
     </section>
+    <div class="casino-lower">
+      <div class="slot-actions">
+        <button type="button" id="spin">[ SPIN ]</button>
+        <button type="button" id="auto-spin" aria-pressed="false" aria-label="Auto spin">∞</button>
+        <button type="button" id="freeze" aria-pressed="false">⏸ FREEZE</button>
+        <button type="button" id="magnet" aria-pressed="false" aria-label="Magnet">🧲</button>
+      </div>
+      <div class="slot-meta">
+        <p id="slot-points">Points: 0</p>
+        <div id="exchange-panel">
+          <p class="exchange-rate">20 points = 1 coin</p>
+          <div class="exchange-slider">
+            <button type="button" id="exchange-min">MIN</button>
+            <input type="range" id="exchange-range" min="0" max="0" step="20" value="0" aria-label="Points to exchange">
+            <button type="button" id="exchange-max">MAX</button>
+          </div>
+          <div class="exchange-preview">
+            <p id="exchange-points">Exchange: 0 points</p>
+            <p id="exchange-coins">Receive: 0 coins</p>
+          </div>
+          <button type="button" id="exchange-submit" disabled>[ EXCHANGE ]</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div id="freeze-tint" aria-hidden="true"></div>

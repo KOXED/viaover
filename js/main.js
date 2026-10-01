@@ -1,6 +1,31 @@
 /* VIAOVER */
 
 (function () {
+  var THEME_KEY = "viaoverTheme";
+  var toggle = document.getElementById("theme-toggle");
+  if (!toggle) return;
+
+  function nightOn() {
+    return document.documentElement.classList.contains("night-mode");
+  }
+
+  function paint() {
+    toggle.setAttribute("aria-pressed", nightOn() ? "true" : "false");
+  }
+
+  paint();
+
+  toggle.addEventListener("click", function () {
+    var night = !nightOn();
+    document.documentElement.classList.toggle("night-mode", night);
+    try {
+      localStorage.setItem(THEME_KEY, night ? "night" : "light");
+    } catch (e) {}
+    paint();
+  });
+})();
+
+(function () {
   var enter = document.getElementById("enter");
   if (!enter) return;
   if (sessionStorage.getItem("viaoverEntered")) return;
@@ -91,7 +116,6 @@
   }
 
   var POINT_RATE = 20;
-  var exchangePanel = document.getElementById("exchange-panel");
   var exchangeRange = document.getElementById("exchange-range");
   var exchangePoints = document.getElementById("exchange-points");
   var exchangeCoins = document.getElementById("exchange-coins");
@@ -105,9 +129,9 @@
 
   function updateExchangePreview(value) {
     var coinsOut = Math.floor(value / POINT_RATE);
-    if (exchangePoints) exchangePoints.textContent = "Points to exchange: " + value;
-    if (exchangeCoins) exchangeCoins.textContent = "Coins received: " + coinsOut;
-    if (exchangeSubmit) exchangeSubmit.disabled = value < POINT_RATE;
+    if (exchangePoints) exchangePoints.textContent = "Exchange: " + value + " points";
+    if (exchangeCoins) exchangeCoins.textContent = "Receive: " + coinsOut + " coins";
+    if (exchangeSubmit) exchangeSubmit.disabled = value < POINT_RATE || points < POINT_RATE;
   }
 
   function syncExchange() {
@@ -255,7 +279,22 @@
   var FREEZE_MS = 10000;
   var COOLDOWN_MS = 5 * 60 * 1000;
   var FREEZE_KEY = "viaoverFreezeCooldown";
+  var MAGNET_MS = 5000;
+  var MAGNET_COOLDOWN_MS = 10000;
+  var MAGNET_RANGE_MOUSE = 150;
+  var MAGNET_RANGE_TOUCH = 180;
+  var MAGNET_COLLECT_DISTANCE = 24;
+  var MAGNET_SPEED_FAR = 90;
+  var MAGNET_SPEED_NEAR = 1100;
   var liveCoins = [];
+  var magnetOn = false;
+  var magnetEndsAt = 0;
+  var magnetCooldownEndsAt = 0;
+  var magnetClock = null;
+  var magnetPointer = null;
+  var magnetRaf = 0;
+  var magnetStamp = 0;
+  var magnetBtn = document.getElementById("magnet");
   var freezeOn = false;
   var freezeEndsAt = 0;
   var cooldownEndsAt = 0;
@@ -391,6 +430,174 @@
     ensureFreezeClock();
   }
 
+  function magnetRange(pointerType) {
+    if (pointerType === "touch" || pointerType === "pen") return MAGNET_RANGE_TOUCH;
+    return MAGNET_RANGE_MOUSE;
+  }
+
+  function rememberMagnetPointer(event) {
+    if (!magnetOn) return;
+    if (magnetPointer && magnetPointer.type !== "mouse" && event.pointerType === "mouse" && magnetPointer.id !== event.pointerId) return;
+    if (event.pointerType !== "mouse" && event.type === "pointermove" && (!magnetPointer || magnetPointer.id !== event.pointerId)) return;
+    magnetPointer = {
+      x: event.clientX,
+      y: event.clientY,
+      type: event.pointerType || "mouse",
+      id: event.pointerId
+    };
+  }
+
+  function forgetMagnetPointer(event) {
+    if (!magnetPointer || magnetPointer.id !== event.pointerId) return;
+    if (magnetPointer.type === "mouse" && event.type !== "pointerout" && event.type !== "pointerleave") return;
+    if (event.type === "pointerout" && event.relatedTarget) return;
+    magnetPointer = null;
+  }
+
+  function attractCoins(dt) {
+    var entries = liveCoins.slice();
+    var range = magnetRange(magnetPointer.type);
+    var moves = [];
+    var i;
+    var entry;
+    var rect;
+    var cx;
+    var cy;
+    var dx;
+    var dy;
+    var dist;
+    var closeness;
+    var speed;
+    var step;
+    for (i = 0; i < entries.length; i++) {
+      entry = entries[i];
+      if (!entry.collect || !entry.coin.parentNode) continue;
+      rect = entry.coin.getBoundingClientRect();
+      cx = rect.left + rect.width / 2;
+      cy = rect.top + rect.height / 2;
+      dx = magnetPointer.x - cx;
+      dy = magnetPointer.y - cy;
+      dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > range) continue;
+      if (dist <= MAGNET_COLLECT_DISTANCE) {
+        moves.push({ entry: entry, collect: true });
+        continue;
+      }
+      closeness = 1 - dist / range;
+      speed = MAGNET_SPEED_FAR + (MAGNET_SPEED_NEAR - MAGNET_SPEED_FAR) * closeness * closeness;
+      step = speed * dt;
+      if (dist - step <= MAGNET_COLLECT_DISTANCE) {
+        moves.push({ entry: entry, collect: true });
+        continue;
+      }
+      moves.push({
+        entry: entry,
+        collect: false,
+        left: parseFloat(entry.coin.style.left) + (dx / dist) * step,
+        top: parseFloat(entry.coin.style.top) + (dy / dist) * step
+      });
+    }
+    for (i = 0; i < moves.length; i++) {
+      if (!moves[i].entry.coin.parentNode) continue;
+      if (moves[i].collect) {
+        moves[i].entry.collect({
+          pointerType: "touch",
+          button: 0,
+          preventDefault: function () {},
+          stopPropagation: function () {}
+        });
+      } else {
+        moves[i].entry.coin.style.left = moves[i].left + "px";
+        moves[i].entry.coin.style.top = moves[i].top + "px";
+      }
+    }
+  }
+
+  function magnetFrame(now) {
+    var dt;
+    magnetRaf = requestAnimationFrame(magnetFrame);
+    if (!magnetOn || !magnetPointer || !liveCoins.length) {
+      magnetStamp = now;
+      return;
+    }
+    dt = magnetStamp ? (now - magnetStamp) / 1000 : 0.016;
+    magnetStamp = now;
+    if (dt < 0) dt = 0;
+    if (dt > 0.05) dt = 0.05;
+    attractCoins(dt);
+  }
+
+  function applyMagnetButton() {
+    var now = Date.now();
+    var seconds;
+    if (!magnetBtn) return;
+    if (magnetOn) {
+      seconds = Math.max(1, Math.ceil((magnetEndsAt - now) / 1000));
+      magnetBtn.disabled = true;
+      magnetBtn.classList.add("active");
+      magnetBtn.classList.remove("cooling");
+      magnetBtn.setAttribute("aria-pressed", "true");
+      magnetBtn.textContent = "🧲 " + seconds + "s";
+      magnetBtn.setAttribute("aria-label", "Magnet on, " + seconds + " seconds left");
+      return;
+    }
+    magnetBtn.classList.remove("active");
+    magnetBtn.setAttribute("aria-pressed", "false");
+    if (magnetCooldownEndsAt > now) {
+      seconds = Math.max(1, Math.ceil((magnetCooldownEndsAt - now) / 1000));
+      magnetBtn.disabled = true;
+      magnetBtn.classList.add("cooling");
+      magnetBtn.textContent = "🧲 " + seconds + "s";
+      magnetBtn.setAttribute("aria-label", "Magnet cooling down, " + seconds + " seconds left");
+      return;
+    }
+    magnetBtn.disabled = false;
+    magnetBtn.classList.remove("cooling");
+    magnetBtn.textContent = "🧲";
+    magnetBtn.setAttribute("aria-label", "Magnet");
+  }
+
+  function stopMagnetClock() {
+    if (!magnetClock) return;
+    clearInterval(magnetClock);
+    magnetClock = null;
+  }
+
+  function endMagnet() {
+    magnetOn = false;
+    magnetPointer = null;
+    magnetStamp = 0;
+    if (magnetRaf) cancelAnimationFrame(magnetRaf);
+    magnetRaf = 0;
+  }
+
+  function updateMagnetClock() {
+    var now = Date.now();
+    if (magnetOn && now >= magnetEndsAt) endMagnet();
+    if (!magnetOn && magnetCooldownEndsAt <= now) {
+      magnetCooldownEndsAt = 0;
+      stopMagnetClock();
+    }
+    applyMagnetButton();
+  }
+
+  function ensureMagnetClock() {
+    if (magnetClock) return;
+    updateMagnetClock();
+    magnetClock = setInterval(updateMagnetClock, 200);
+  }
+
+  function startMagnet() {
+    var now;
+    if (magnetOn || magnetCooldownEndsAt > Date.now()) return;
+    now = Date.now();
+    magnetOn = true;
+    magnetEndsAt = now + MAGNET_MS;
+    magnetCooldownEndsAt = now + MAGNET_MS + MAGNET_COOLDOWN_MS;
+    if (!magnetRaf) magnetRaf = requestAnimationFrame(magnetFrame);
+    ensureMagnetClock();
+  }
+
   function launchCoin(origin, index, total) {
     var coin = document.createElement("button");
     var collected = false;
@@ -501,6 +708,7 @@
     }
 
     entry.expire = expire;
+    entry.collect = collect;
     coin.addEventListener("pointerdown", collect);
     coin.addEventListener("animationend", function (event) {
       if (event.animationName === "coin-shrink" && entry.runningSince != null) expire();
@@ -550,19 +758,20 @@
     });
   }
 
-  if (pointsEl && exchangePanel && exchangeRange && exchangeSubmit && exchangeMin && exchangeMax) {
-    pointsEl.addEventListener("click", function () {
-      var open = exchangePanel.hasAttribute("hidden");
-      if (open) {
-        exchangePanel.removeAttribute("hidden");
-        pointsEl.setAttribute("aria-expanded", "true");
-        syncExchange();
-      } else {
-        exchangePanel.setAttribute("hidden", "");
-        pointsEl.setAttribute("aria-expanded", "false");
-      }
+  if (magnetBtn) {
+    document.addEventListener("pointerdown", rememberMagnetPointer);
+    document.addEventListener("pointermove", rememberMagnetPointer);
+    document.addEventListener("pointerup", forgetMagnetPointer);
+    document.addEventListener("pointercancel", forgetMagnetPointer);
+    document.addEventListener("pointerout", forgetMagnetPointer);
+    magnetBtn.addEventListener("click", function () {
+      startMagnet();
     });
+    localStorage.removeItem("viaoverMagnet");
+    applyMagnetButton();
+  }
 
+  if (exchangeRange && exchangeSubmit && exchangeMin && exchangeMax) {
     exchangeRange.addEventListener("input", function () {
       updateExchangePreview(parseInt(exchangeRange.value, 10) || 0);
     });

@@ -8,6 +8,37 @@ html, body {
 body {
   font-family: sans-serif;
   font-size: 1rem;
+  padding-top: 3rem;
+}
+
+#theme-toggle {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 11;
+  margin: 0;
+  padding: 0.3rem 0.55rem;
+  font: inherit;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  color: #000000;
+  background: #ffffff;
+  border: 1px solid #000000;
+  cursor: pointer;
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+
+.theme-label-night {
+  display: none;
+}
+
+html.night-mode .theme-label-light {
+  display: none;
+}
+
+html.night-mode .theme-label-night {
+  display: inline;
 }
 
 h1 {
@@ -21,9 +52,11 @@ h1 {
   position: fixed;
   inset: 0;
   z-index: 10;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 3rem 1rem 1rem;
   background: #ffffff;
   text-align: center;
 }
@@ -62,39 +95,55 @@ html.entered #construction {
   flex: 1 1 25rem;
   box-sizing: border-box;
   max-width: 25rem;
-  padding: 1.5rem;
+  padding: 1.5rem 1.5rem 0.5rem;
+}
+
+.slot-meta {
+  position: relative;
+  box-sizing: border-box;
+  max-width: 25rem;
+  margin: 1rem 0 0;
+  padding: 1rem 1.5rem 1.5rem;
+  border-top: 1px solid #000000;
 }
 
 #slot-points {
-  position: absolute;
-  top: 0.55rem;
-  right: 0.75rem;
-  margin: 0;
+  display: inline-block;
+  margin: 0 0 0.4rem;
   padding: 0.1rem 0.35rem;
-  font: inherit;
   font-size: 0.75rem;
   line-height: 1.2;
   color: #000000;
   background: #ffffff;
   border: 1px solid #000000;
-  cursor: pointer;
 }
 
 #exchange-panel {
-  margin-top: 1rem;
-  text-align: center;
+  text-align: left;
+}
+
+.exchange-rate {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+}
+
+.exchange-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.75rem;
+  margin: 0 0 0.45rem;
 }
 
 #exchange-panel p {
-  margin: 0 0 0.45rem;
-  font-size: 0.85rem;
+  margin: 0;
+  font-size: 0.75rem;
 }
 
 .exchange-slider {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.4rem;
 }
 
 #exchange-range {
@@ -121,8 +170,8 @@ html.entered #construction {
 }
 
 #exchange-submit {
-  font-size: 1rem;
-  padding: 0.4rem 0.8rem;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.5rem;
 }
 
 #exchange-submit:disabled {
@@ -133,8 +182,8 @@ html.entered #construction {
 
 .point-pop {
   position: absolute;
-  top: 1.45rem;
-  right: 0.75rem;
+  top: 0.15rem;
+  right: 0;
   margin: 0;
   font-size: 0.75rem;
   line-height: 1;
@@ -367,16 +416,26 @@ html.time-freeze #freeze-tint {
   to { transform: translateY(70%); }
 }
 
+.casino-lower {
+  flex: 0 0 100%;
+  box-sizing: border-box;
+}
+
 .slot-actions {
   display: flex;
   flex-wrap: wrap;
+  box-sizing: border-box;
+  max-width: 25rem;
   justify-content: center;
   gap: 0.5rem;
+  margin: 0;
+  padding: 0 1.5rem 0.25rem;
 }
 
 #spin,
 #auto-spin,
-#freeze {
+#freeze,
+#magnet {
   padding: 0.4rem 0.8rem;
   font: inherit;
   color: #000000;
@@ -385,14 +444,23 @@ html.time-freeze #freeze-tint {
   cursor: pointer;
 }
 
-#freeze {
+#freeze,
+#magnet {
   touch-action: manipulation;
   white-space: nowrap;
 }
 
-#auto-spin.active {
+#auto-spin.active,
+#magnet.active {
   color: #ffffff;
   background: #000000;
+}
+
+#magnet.cooling:disabled {
+  color: #767676;
+  border-color: #767676;
+  background: #ffffff;
+  cursor: default;
 }
 
 #spin:disabled,
@@ -409,16 +477,22 @@ html.time-freeze #freeze-tint {
 
 @media (max-width: 480px) {
   #slots {
+    padding: 1rem 1rem 0.5rem;
+  }
+
+  .slot-actions,
+  .slot-meta {
+    max-width: none;
+  }
+
+  .slot-actions {
+    padding: 0 1rem 0.25rem;
+  }
+
+  .slot-meta {
+    max-width: none;
+    margin-top: 1rem;
     padding: 1rem;
-  }
-
-  #slot-points,
-  .point-pop {
-    right: 0.65rem;
-  }
-
-  #slot-points {
-    top: 0.45rem;
   }
 
   #cat {
@@ -430,4 +504,77 @@ html.time-freeze #freeze-tint {
     height: 3.75rem;
     font-size: 1.75rem;
   }
+}
+
+html.night-mode {
+  color-scheme: dark;
+  background: #122033;
+  color: #e6eef8;
+}
+
+html.night-mode body,
+html.night-mode #construction {
+  background: #122033;
+  color: #e6eef8;
+}
+
+html.night-mode #theme-toggle,
+html.night-mode #enter,
+html.night-mode #slot-points,
+html.night-mode #exchange-min,
+html.night-mode #exchange-max,
+html.night-mode #exchange-submit,
+html.night-mode #spin,
+html.night-mode #auto-spin,
+html.night-mode #freeze,
+html.night-mode #magnet {
+  color: #e6eef8;
+  background: #1b2e46;
+  border-color: #b7c7dc;
+}
+
+html.night-mode .slot-meta {
+  border-top-color: #b7c7dc;
+}
+
+html.night-mode .reel {
+  background: #1b2e46;
+  border-color: #b7c7dc;
+  color: #e6eef8;
+}
+
+html.night-mode #exchange-range {
+  accent-color: #e6eef8;
+}
+
+html.night-mode .cat-face:focus-visible {
+  outline-color: #e6eef8;
+}
+
+html.night-mode #auto-spin.active,
+html.night-mode #magnet.active {
+  color: #122033;
+  background: #e6eef8;
+  border-color: #e6eef8;
+}
+
+html.night-mode #exchange-submit:disabled,
+html.night-mode #magnet.cooling:disabled,
+html.night-mode #spin:disabled,
+html.night-mode #freeze:disabled {
+  color: #8ea0b8;
+  background: #1b2e46;
+  border-color: #8ea0b8;
+}
+
+html.night-mode #freeze.freezing:disabled {
+  color: #e6eef8;
+  background: #1b2e46;
+  border-color: #b7c7dc;
+}
+
+html.night-mode .flying-coin {
+  background: #ffffff;
+  border-color: #e6eef8;
+  color: #122033;
 }
