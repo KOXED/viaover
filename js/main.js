@@ -143,17 +143,90 @@
     }
   }
 
+  function dropElement(el) {
+    if (el.parentNode) el.parentNode.removeChild(el);
+  }
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function launchCoin() {
+    var coin = document.createElement("button");
+    var rect = catFace.getBoundingClientRect();
+    var collected = false;
+    var size;
+    var startLeft;
+    var startTop;
+    var endLeft;
+    var endTop;
+    var dx;
+    var dy;
+    var len;
+    var arc;
+    var px;
+    var py;
+    var midLeft;
+    var midTop;
+
+    coin.type = "button";
+    coin.className = "flying-coin";
+    coin.textContent = "🪙";
+    coin.setAttribute("aria-label", "Collect coin");
+    document.body.appendChild(coin);
+    size = coin.offsetWidth || 56;
+    startLeft = rect.left + rect.width / 2 - size / 2;
+    startTop = rect.top + rect.height / 2 - size / 2;
+    endLeft = 8 + Math.random() * Math.max(0, window.innerWidth - size - 16);
+    endTop = 8 + Math.random() * Math.max(0, window.innerHeight - size - 16);
+    dx = endLeft - startLeft;
+    dy = endTop - startTop;
+    len = Math.sqrt(dx * dx + dy * dy) || 1;
+    arc = (Math.random() < 0.5 ? -1 : 1) * (24 + Math.random() * 36);
+    px = -dy / len * arc;
+    py = dx / len * arc;
+    midLeft = startLeft + dx * 0.55 + px;
+    midTop = startTop + dy * 0.55 + py;
+    if (midLeft < 8 || midTop < 8 || midLeft > window.innerWidth - size - 8 || midTop > window.innerHeight - size - 8) {
+      px = 0;
+      py = 0;
+    }
+    coin.style.left = startLeft + "px";
+    coin.style.top = startTop + "px";
+    coin.style.setProperty("--x", dx + "px");
+    coin.style.setProperty("--y", dy + "px");
+    coin.style.setProperty("--px", px + "px");
+    coin.style.setProperty("--py", py + "px");
+    coin.style.animationDuration = (0.7 + Math.random() * 0.35) + "s";
+
+    function collect(event) {
+      if (collected) return;
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      collected = true;
+      event.preventDefault();
+      event.stopPropagation();
+      coins += 1;
+      saveCoins();
+      render();
+      balanceEl.classList.remove("pop");
+      void balanceEl.offsetWidth;
+      balanceEl.classList.add("pop");
+      dropElement(coin);
+    }
+
+    coin.addEventListener("pointerdown", collect);
+  }
+
   if (catFace && catMessage && catStage) {
     catFace.addEventListener("click", function () {
+      var roll;
       bounceCat();
       spawnHearts();
 
-      var roll = Math.floor(Math.random() * 100) + 1;
+      roll = Math.floor(Math.random() * 100) + 1;
       if (roll <= 10) {
-        coins += 1;
-        saveCoins();
-        render();
         catMessage.textContent = "🐱 The cat gave you a coin!";
+        launchCoin();
       } else {
         catMessage.textContent = "🐱 Purrr… no coin this time.";
       }
