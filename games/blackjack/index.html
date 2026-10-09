@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" class="blackjack-page">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>VIAOVER — Blackjack</title>
+  <script>
+    try {
+      if (localStorage.getItem("viaoverTheme") === "night") {
+        document.documentElement.classList.add("night-mode");
+      }
+    } catch (e) {}
+    if (sessionStorage.getItem("viaoverEntered")) {
+      document.documentElement.classList.add("entered");
+    }
+  </script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <button type="button" id="theme-toggle" aria-pressed="false">
+    <span class="theme-label-light">☀️ Light View</span>
+    <span class="theme-label-night">🌙 Night View</span>
+  </button>
+
+  <!-- Remove #construction when the site is ready. -->
+  <div id="construction">
+    <div class="construction-copy">
+      <p>VIAOVER</p>
+      <p>UNDER CONSTRUCTION</p>
+      <p>This website is currently in development.</p>
+      <p>Some pages, features, and links may be incomplete, unavailable, or change without notice.</p>
+      <p>You are welcome to look around while VIAOVER is being built.</p>
+      <button type="button" id="enter">[ ENTER VIAOVER ]</button>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <a class="site-logo" href="/">VIAOVER</a>
+    <nav class="site-nav" aria-label="Site">
+      <a href="/">Games</a>
+      <a class="back-games" href="/">Back to Games</a>
+    </nav>
+  </header>
+
+  <main class="bj">
+    <h2>BLACKJACK</h2>
+    <p id="bj-balance">Coins: 0</p>
+    <p id="bj-points">Points: 0</p>
+    <p id="bj-wager">Bet: 1</p>
+    <div class="bj-table">
+      <section class="bj-hand" aria-label="Dealer">
+        <h3>Dealer</h3>
+        <p id="bj-dealer-total">Total: —</p>
+        <div id="bj-dealer-cards" class="bj-cards"></div>
+      </section>
+      <p id="bj-result" aria-live="polite">Place a bet.</p>
+      <section class="bj-hand" aria-label="Player">
+        <h3>You</h3>
+        <p id="bj-player-total">Total: —</p>
+        <div id="bj-player-cards" class="bj-cards"></div>
+      </section>
+    </div>
+    <div id="bj-bets" class="bj-bets" role="group" aria-label="Bet"></div>
+    <p class="bj-rules">Dealer stands on 17. Natural blackjack pays 3:2 in whole coins.</p>
+    <div class="bj-actions">
+      <button type="button" id="bj-deal">[ DEAL ]</button>
+      <button type="button" id="bj-hit" disabled>[ HIT ]</button>
+      <button type="button" id="bj-stand" disabled>[ STAND ]</button>
+      <button type="button" id="bj-next" disabled>[ NEW ROUND ]</button>
+      <button type="button" id="bj-mute" aria-pressed="false">[ SOUND ]</button>
+    </div>
+  </main>
+
+  <script src="/js/economy.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/blackjack-rules.js"></script>
+  <script src="/js/blackjack.js"></script>
+</body>
+</html>

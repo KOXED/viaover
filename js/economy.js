@@ -1,6 +1,7 @@
 /* Add a game by appending an object to VIAOVER_GAMES.
-   coinsKey and pointsKey are that game's own saved balances.
-   Homepage totals are the sum of these keys. Do not add a combined total. */
+   coinsKey and pointsKey are that game's saved balances.
+   Games that share one purse must reuse the same keys.
+   Homepage totals add each key once. Do not add a combined total. */
 var VIAOVER_GAMES = [
   {
     id: "slots",
@@ -8,6 +9,16 @@ var VIAOVER_GAMES = [
     description: "Spin the reels, collect coins, and trade points.",
     href: "/games/slots/",
     thumb: "🎰",
+    available: true,
+    coinsKey: "viaoverSlotCoins",
+    pointsKey: "viaoverSlotPoints"
+  },
+  {
+    id: "blackjack",
+    title: "Blackjack",
+    description: "Play the dealer. Natural blackjack pays 3:2.",
+    href: "/games/blackjack/",
+    thumb: "🃏",
     available: true,
     coinsKey: "viaoverSlotCoins",
     pointsKey: "viaoverSlotPoints"

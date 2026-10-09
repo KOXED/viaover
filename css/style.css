@@ -1001,3 +1001,208 @@ html.night-mode .flying-coin {
   border-color: #e6eef8;
   color: #122033;
 }
+
+.bj {
+  box-sizing: border-box;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 0.75rem 1rem 1.5rem;
+}
+
+.bj h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.bj h3 {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+#bj-balance,
+#bj-points,
+#bj-wager,
+#bj-dealer-total,
+#bj-player-total,
+#bj-result,
+.bj-rules {
+  margin: 0 0 0.3rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.bj-table {
+  box-sizing: border-box;
+  margin: 0.45rem 0;
+  padding: 0.7rem 0.6rem 0.4rem;
+  border: 1px solid #000000;
+  overflow: hidden;
+}
+
+.bj-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 4.7rem;
+  margin: 0.35rem 0 0.55rem;
+}
+
+.bj-card {
+  position: relative;
+  box-sizing: border-box;
+  width: 3.3rem;
+  height: 4.7rem;
+  border: 1px solid #000000;
+  background: #ffffff;
+  color: #000000;
+}
+
+.bj-card.red {
+  color: #9d1428;
+}
+
+.bj-card.back {
+  background: repeating-linear-gradient(-45deg, #000000 0 3px, #ffffff 3px 7px);
+}
+
+.bj-corner {
+  position: absolute;
+  top: 0.2rem;
+  left: 0.22rem;
+  font-size: 0.68rem;
+  line-height: 1;
+}
+
+.bj-suit {
+  display: block;
+  margin-top: 1.45rem;
+  font-size: 1.35rem;
+  line-height: 1;
+  text-align: center;
+}
+
+@keyframes bj-deal {
+  from { transform: translate(2.75rem, -1.6rem) rotate(7deg); }
+  to { transform: translate(0, 0) rotate(0deg); }
+}
+
+.bj-card.deal {
+  animation: bj-deal 0.28s linear both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bj-card.deal {
+    animation: none;
+  }
+}
+
+.bj-bets,
+.bj-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 0.45rem 0;
+  touch-action: manipulation;
+}
+
+.bj-bets button,
+.bj-actions button {
+  min-height: 2.15rem;
+  padding: 0.35rem 0.6rem;
+  font: inherit;
+  font-size: 0.75rem;
+  color: #000000;
+  background: #ffffff;
+  border: 1px solid #000000;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.bj-bets button[aria-pressed="true"],
+.bj-bets button[aria-pressed="true"]:disabled {
+  color: #ffffff;
+  background: #000000;
+  border-color: #000000;
+}
+
+.bj-bets button:disabled,
+.bj-actions button:disabled {
+  color: #767676;
+  border-color: #767676;
+  cursor: default;
+}
+
+@media (max-width: 480px) {
+  .bj {
+    padding: 0.35rem 0.6rem 1rem;
+  }
+
+  .bj-cards {
+    gap: 0.3rem;
+    min-height: 3.6rem;
+  }
+
+  .bj-card {
+    width: 2.45rem;
+    height: 3.6rem;
+  }
+
+  .bj-suit {
+    margin-top: 1.05rem;
+    font-size: 1.05rem;
+  }
+
+  .bj-corner {
+    font-size: 0.6rem;
+  }
+}
+
+html.night-mode .bj-table,
+html.night-mode .bj-card,
+html.night-mode .bj-bets button,
+html.night-mode .bj-actions button {
+  border-color: #b7c7dc;
+}
+
+html.night-mode .bj-table {
+  background: #1b2e46;
+}
+
+html.night-mode .bj-card {
+  background: #f7f9fc;
+  color: #122033;
+}
+
+html.night-mode .bj-card.red {
+  color: #9d1428;
+}
+
+html.night-mode .bj-card.back {
+  background: repeating-linear-gradient(-45deg, #122033 0 3px, #d5e2f2 3px 7px);
+}
+
+html.night-mode .bj-bets button,
+html.night-mode .bj-actions button {
+  color: #e6eef8;
+  background: #1b2e46;
+}
+
+html.night-mode .bj-bets button[aria-pressed="true"],
+html.night-mode .bj-bets button[aria-pressed="true"]:disabled {
+  color: #122033;
+  background: #e6eef8;
+  border-color: #e6eef8;
+}
+
+html.night-mode .bj-bets button:disabled,
+html.night-mode .bj-actions button:disabled {
+  color: #8ea0b8;
+  background: #1b2e46;
+  border-color: #8ea0b8;
+}
