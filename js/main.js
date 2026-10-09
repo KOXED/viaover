@@ -1,6 +1,45 @@
 /* VIAOVER */
 
 (function () {
+  var GUEST_KEY = "viaoverGuestId";
+
+  function guestId() {
+    if (window.crypto && typeof crypto.randomUUID === "function") {
+      return crypto.randomUUID();
+    }
+    return "g-" + Date.now().toString(36) + "-" + Math.floor(Math.random() * 1e9).toString(36);
+  }
+
+  try {
+    if (!localStorage.getItem(GUEST_KEY)) {
+      localStorage.setItem(GUEST_KEY, guestId());
+    }
+  } catch (e) {}
+})();
+
+(function () {
+  var guestEl = document.getElementById("guest-id");
+  var coinsEl = document.getElementById("guest-coins");
+  var pointsEl = document.getElementById("guest-points");
+  if (!guestEl || !coinsEl || !pointsEl) return;
+
+  function paintWallet() {
+    var totals = window.VIAOVER_ECONOMY ? VIAOVER_ECONOMY.totals() : null;
+    var id = "";
+    if (!totals) return;
+    try {
+      id = localStorage.getItem("viaoverGuestId") || "";
+    } catch (e) {}
+    guestEl.textContent = id;
+    coinsEl.textContent = "Coins: " + totals.coins;
+    pointsEl.textContent = "Points: " + totals.points;
+  }
+
+  paintWallet();
+  window.addEventListener("pageshow", paintWallet);
+})();
+
+(function () {
   var THEME_KEY = "viaoverTheme";
   var toggle = document.getElementById("theme-toggle");
   if (!toggle) return;
@@ -40,7 +79,7 @@
   var SYMBOLS = ["🍒", "🍋", "🔔", "💎", "7"];
   var PAYOUTS = { "🍒": 3, "🍋": 5, "🔔": 8, "💎": 15, "7": 30 };
   var POINT_REWARDS = { "🍋": 100, "🍒": 150, "🔔": 250, "💎": 500, "7": 1000 };
-  var START_COINS = 10;
+  var START_COINS = 0;
   var STORAGE_KEY = "viaoverSlotCoins";
   var POINT_KEY = "viaoverSlotPoints";
   var SPIN_MS = [700, 1100, 1500];
@@ -69,6 +108,7 @@
   var autoOn = false;
 
   function readCoins() {
+    if (window.VIAOVER_ECONOMY) return VIAOVER_ECONOMY.readCoins("slots");
     var stored = localStorage.getItem(STORAGE_KEY);
     var value = parseInt(stored, 10);
     if (stored === null || isNaN(value) || value < 0) return START_COINS;
@@ -76,10 +116,12 @@
   }
 
   function saveCoins() {
+    if (window.VIAOVER_ECONOMY && VIAOVER_ECONOMY.writeCoins("slots", coins)) return;
     localStorage.setItem(STORAGE_KEY, String(coins));
   }
 
   function readPoints() {
+    if (window.VIAOVER_ECONOMY) return VIAOVER_ECONOMY.readPoints("slots");
     var stored = localStorage.getItem(POINT_KEY);
     var value = parseInt(stored, 10);
     if (stored === null || isNaN(value) || value < 0) return 0;
@@ -87,6 +129,7 @@
   }
 
   function savePoints() {
+    if (window.VIAOVER_ECONOMY && VIAOVER_ECONOMY.writePoints("slots", points)) return;
     localStorage.setItem(POINT_KEY, String(points));
   }
 

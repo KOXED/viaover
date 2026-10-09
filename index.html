@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>VIAOVER</title>
+  <title>VIAOVER — Games</title>
   <script>
     try {
       if (localStorage.getItem("viaoverTheme") === "night") {
@@ -14,9 +14,9 @@
       document.documentElement.classList.add("entered");
     }
   </script>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="home-page">
   <button type="button" id="theme-toggle" aria-pressed="false">
     <span class="theme-label-light">☀️ Light View</span>
     <span class="theme-label-night">🌙 Night View</span>
@@ -34,52 +34,27 @@
     </div>
   </div>
 
-  <div class="minigames">
-    <section id="slots" aria-label="Slot machine">
-      <h2>SLOTS</h2>
-      <p id="slot-balance">Coins: 10</p>
-      <div class="reels">
-        <div class="reel" id="reel-0" aria-hidden="true"><span class="symbol">🍒</span></div>
-        <div class="reel" id="reel-1" aria-hidden="true"><span class="symbol">🍋</span></div>
-        <div class="reel" id="reel-2" aria-hidden="true"><span class="symbol">🔔</span></div>
-      </div>
-      <p id="slot-result" aria-live="polite">Match three symbols to win.</p>
-    </section>
+  <aside id="guest-wallet" class="guest-wallet" aria-label="Guest account">
+    <p class="guest-wallet-label">Guest</p>
+    <p id="guest-id"></p>
+    <p id="guest-coins">Coins: 0</p>
+    <p id="guest-points">Points: 0</p>
+  </aside>
 
-    <section id="cat" aria-label="Pet the cat">
-      <div class="cat-stage">
-        <button type="button" id="cat-face" class="cat-face" aria-labelledby="cat-label">🐱</button>
-      </div>
-      <p id="cat-label" class="cat-label">Pet the cat</p>
-      <p id="cat-message" aria-live="polite"></p>
-    </section>
-    <div class="casino-lower">
-      <div class="slot-actions">
-        <button type="button" id="spin">[ SPIN ]</button>
-        <button type="button" id="auto-spin" aria-pressed="false" aria-label="Auto spin">∞</button>
-        <button type="button" id="freeze" aria-pressed="false">⏸ FREEZE</button>
-        <button type="button" id="magnet" aria-pressed="false" aria-label="Magnet">🧲</button>
-      </div>
-      <div class="slot-meta">
-        <p id="slot-points">Points: 0</p>
-        <div id="exchange-panel">
-          <p class="exchange-rate">20 points = 1 coin</p>
-          <div class="exchange-slider">
-            <button type="button" id="exchange-min">MIN</button>
-            <input type="range" id="exchange-range" min="0" max="0" step="20" value="0" aria-label="Points to exchange">
-            <button type="button" id="exchange-max">MAX</button>
-          </div>
-          <div class="exchange-preview">
-            <p id="exchange-points">Exchange: 0 points</p>
-            <p id="exchange-coins">Receive: 0 coins</p>
-          </div>
-          <button type="button" id="exchange-submit" disabled>[ EXCHANGE ]</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <header class="site-header">
+    <a class="site-logo" href="/">VIAOVER</a>
+    <nav class="site-nav" aria-label="Site">
+      <a href="/" aria-current="page">Games</a>
+    </nav>
+  </header>
 
-  <div id="freeze-tint" aria-hidden="true"></div>
-  <script src="js/main.js"></script>
+  <main class="portal">
+    <h1>Games</h1>
+    <div id="game-list" class="game-list"></div>
+  </main>
+
+  <script src="/js/economy.js"></script>
+  <script src="/js/games.js"></script>
+  <script src="/js/main.js"></script>
 </body>
 </html>
